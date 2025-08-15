@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SweetForecast - BlueCyan Diabetes Predictor</title>
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+
+  <!-- Load model-viewer early -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js" defer></script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <a class="logo" href="/">SweetForecast</a>
+    <div class="nav-links">
+      <a href="#predict">Predict</a>
+      <a href="#extras">Extras</a>
+      <a href="#about">About</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-left">
+      <h1>SweetForecast</h1>
+      <p class="tag">See Your Risk, Shape Your Future</p>
+      <a class="btn" href="#predict">Start Prediction</a>
+    </div>
+    <div class="hero-right">
+      <div class="model-placeholder" data-model="dna.glb" style="width:100%; height:420px;">
+        <div class="missing">Loading model…</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Prediction Form -->
+    <section id="predict" class="predict-section">
+      <div class="left-panel">
+        <h2>Diabetes Predictor</h2>
+        <form id="predictForm">
+          <label>Gender
+            <select id="form_gender" name="Gender">
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </label>
+
+          <label>Pregnancies <input id="form_pregnancies" name="Pregnancies" type="number" min="0" value="1"></label>
+          <label>Glucose <input id="form_glucose" name="Glucose" type="number" min="0" value="117"></label>
+          <label>Blood Pressure <input id="form_bloodpressure" name="BloodPressure" type="number" min="0" value="72"></label>
+          <label>SkinThickness <input id="form_skinthickness" name="SkinThickness" type="number" min="0" value="20"></label>
+          <label>Insulin <input id="form_insulin" name="Insulin" type="number" min="0" value=""></label>
+          <label>BMI <input id="form_bmi" name="BMI" type="number" step="0.1" value="32.0"></label>
+          <label>Diabetes Pedigree Function <input id="form_dpf" name="DiabetesPedigreeFunction" type="number" step="0.01" value="0.47"></label>
+          <label>Age <input id="form_age" name="Age" type="number" min="0" value="30"></label>
+
+          <div class="buttons">
+            <button id="clearBtn" type="button">Reset</button>
+            <button id="submitBtn" type="submit">Predict</button>
+          </div>
+        </form>
+
+        <div class="result-card">
+          <h3>Risk</h3>
+          <div id="probText">—</div>
+          <div id="categoryText"></div>
+          <svg id="gauge" viewBox="0 0 100 70" width="180"></svg>
+          <div id="topFactors"></div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="model-wrap">
+          <div id="glucoseModel" class="model-placeholder" data-model="glucose.glb" style="width:100%; height:520px;">
+            <div class="missing">Loading model…</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Extras -->
+    <section id="extras" class="extras-section">
+      <h3>Interactive visualizations & simulators</h3>
+      <div class="viz-grid">
+        <div class="chart-card">
+          <h4>Risk trend (history)</h4>
+          <canvas id="trendChart" height="180"></canvas>
+        </div>
+        <div class="fi-card">
+          <h4>Feature importances</h4>
+          <canvas id="fiChart" height="180"></canvas>
+        </div>
+      </div>
+      <div class="sim-whatif">
+        <div class="sim-card">
+          <h4>Blood sugar simulator</h4>
+          <label>Carbs (grams): <input id="simCarbs" type="number" value="50" min="0"></label>
+          <label>Insulin units: <input id="simInsulin" type="number" value="0" min="0"></label>
+          <button id="runSim" class="btn">Run Simulation</button>
+          <canvas id="simChart" height="160"></canvas>
+        </div>
+        <div class="whatif-card">
+          <h4>What-if panel</h4>
+          <label>Glucose: <input id="wf_glucose" type="range" min="50" max="250" value="117"></label>
+          <div id="wf_value_glucose">117</div>
+          <label>BMI: <input id="wf_bmi" type="range" min="15" max="60" value="32"></label>
+          <div id="wf_value_bmi">32</div>
+          <label>Age: <input id="wf_age" type="range" min="10" max="90" value="30"></label>
+          <div id="wf_value_age">30</div>
+          <button id="wf_apply" class="btn">Apply to form</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- What-If Risk Simulator -->
+    <section id="whatif" class="whatif-section">
+      <h3>What-If Risk Simulator</h3>
+      <p>Adjust the sliders below to see how your diabetes risk changes in real time.</p>
+
+      <div class="sliders">
+        <label>Age: <span id="ageVal">30</span>
+          <input id="sim_age" type="range" min="10" max="90" value="30">
+        </label>
+
+        <label>Weight (kg): <span id="weightVal">70</span>
+          <input id="sim_weight" type="range" min="40" max="150" value="70">
+        </label>
+
+        <label>Insulin Level: <span id="insulinVal">80</span>
+          <input id="sim_insulin" type="range" min="0" max="300" value="80">
+        </label>
+      </div>
+
+      <!-- Chart for risk -->
+     <div style="width: 50%; height: 50vh; margin: auto;">
+    <canvas id="riskChart"></canvas>
+</div>
+
+
+    </section>
+
+    <!-- About -->
+    <section id="about" class="about-section">
+      <div class="about-left">
+        <h2>About & Tips</h2>
+        <p>Personalized suggestions based on your risk profile will be shown here.</p>
+        <ul id="lifestyleTips">
+          <li>Improve diet: reduce refined carbs</li>
+          <li>Exercise: aim for 30 minutes daily</li>
+          <li>Monitor sleep and stress</li>
+        </ul>
+      </div>
+      <div class="about-right">
+        <div class="model-placeholder" data-model="heartbeat.glb" style="width:100%; height:320px;">
+          <div class="missing">Loading model…</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    © Neelesh Ranjan - SweetForecast
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/whatif.js') }}" defer></script>
+</body>
+</html>
