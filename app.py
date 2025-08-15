@@ -109,6 +109,10 @@ def model_stats():
 def model_meta():
     return jsonify(meta)
 
+@app.route('/lifestyle')
+def lifestyle():
+    return render_template('lifestyle.html')
+
 
 if __name__ == "__main__":
     app.run(debug=True)

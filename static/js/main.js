@@ -1,3 +1,4 @@
+// ----------------- DOM Ready Helper -----------------
 function whenDOMReady(callback) {
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", callback);
@@ -6,6 +7,7 @@ function whenDOMReady(callback) {
   }
 }
 
+// ----------------- Load 3D Model Placeholders -----------------
 async function loadPlaceholders() {
   const phs = document.querySelectorAll(".model-placeholder");
 
@@ -42,11 +44,13 @@ async function loadPlaceholders() {
   }
 }
 
+// ----------------- Extra UI Init -----------------
 function initExtras() {
   console.log("Extras initialized");
   // TODO: set up charts, sliders, etc.
 }
 
+// ----------------- Load Model Metadata -----------------
 async function loadAllData() {
   try {
     const [stats, fi, metadata] = await Promise.all([
@@ -63,8 +67,57 @@ async function loadAllData() {
   }
 }
 
+// ----------------- Handle Prediction Form -----------------
+function initPredictForm() {
+  const form = document.getElementById("predictForm");
+  if (!form) return;
+
+  const probText = document.getElementById("probText");
+  const categoryText = document.getElementById("categoryText");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault(); // stop reload
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        probText.textContent = (result.probability * 100).toFixed(1) + "%";
+        categoryText.textContent = result.prediction === 1 ? "High Risk" : "Low Risk";
+      } else {
+        probText.textContent = "Error";
+        categoryText.textContent = result.error || "Unknown issue";
+      }
+    } catch (err) {
+      probText.textContent = "Error";
+      categoryText.textContent = err.message;
+    }
+  });
+
+  // Reset button logic
+  const resetBtn = document.getElementById("clearBtn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      form.reset();
+      probText.textContent = "—";
+      categoryText.textContent = "";
+    });
+  }
+}
+
+// ----------------- Initialize Everything -----------------
 whenDOMReady(() => {
   loadPlaceholders();   // Load 3D models
   initExtras();         // Initialize extras
   loadAllData();        // Fetch stats & metadata
+  initPredictForm();    // Bind prediction form
 });
