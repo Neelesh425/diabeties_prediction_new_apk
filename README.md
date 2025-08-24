@@ -26,5 +26,3 @@ Files included:
 - static/js/main.js
 - requirements.txt
 
-Notes:
-- This model was trian on Random Forest for accuracy.
