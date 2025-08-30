@@ -3,8 +3,7 @@ SweetForecast - BlueCyan Diabetes Predictor (landscape UI)
 ========================================================
 
 This package includes a ready-to-run Flask app that serves a futuristic diabetes prediction UI.
-Three large .glb 3D model files are intentionally excluded to keep the package small. Place your
-models into `static/models/` with the exact filenames:
+hoc
 
   - glucose.glb
   - insulin.glb
@@ -25,4 +24,3 @@ Files included:
 - static/css/styles.css
 - static/js/main.js
 - requirements.txt
-
